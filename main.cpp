@@ -1,13 +1,18 @@
 #include <iostream>
+#include <memory>
 
 using std::cout;
+using std::unique_ptr;
+using std::make_unique;
+using std::shared_ptr;
+using std::make_shared;
 
 class Node
 {
 public:
     int key, height;
-    Node* left = nullptr;
-    Node* right = nullptr;
+    shared_ptr<Node> left;
+    shared_ptr<Node> right;
 
     Node(int _key)
     {
@@ -19,7 +24,7 @@ public:
 class AVLTree
 {
 private:
-    int height(Node* nodePointer)
+    int height(shared_ptr<Node> nodePointer)
     {
         if (nodePointer == NULL)
             return 0;
@@ -32,12 +37,12 @@ private:
     }
 
 public:
-    Node* root = nullptr;
+    shared_ptr<Node> root;
 
-    Node* rightRotate(Node* y)
+    shared_ptr<Node> rightRotate(shared_ptr<Node> y)
     {
-        Node* x = y->left;
-        Node* T2 = x->right;
+        shared_ptr<Node> x = y->left;
+        shared_ptr<Node> T2 = x->right;
 
         x->right = y;
         y->left = T2;
@@ -48,10 +53,10 @@ public:
         return x;
     }
 
-    Node* leftRotate(Node* x)
+    shared_ptr<Node> leftRotate(shared_ptr<Node> x)
     {
-        Node* y = x->right;
-        Node* T2 = y->left;
+        shared_ptr<Node> y = x->right;
+        shared_ptr<Node> T2 = y->left;
 
         y->left = x;
         x->right = T2;
@@ -62,7 +67,7 @@ public:
         return y;
     }
 
-    int getBalance(Node* nodePointer)
+    int getBalance(shared_ptr<Node> nodePointer)
     {
         if (nodePointer == NULL)
             return 0;
@@ -70,11 +75,11 @@ public:
         return height(nodePointer->left) - height(nodePointer->right);
     }
 
-    Node* insertValue(Node* nodePointer, int key)
+    shared_ptr<Node> insertValue(shared_ptr<Node> nodePointer, int key)
     {
         if (nodePointer == NULL)
         {
-            nodePointer = new Node(key);
+            nodePointer = make_shared<Node>(key);
             return nodePointer;
         }
 
@@ -118,7 +123,7 @@ public:
         return nodePointer;
     }
 
-    void preOrder(Node* nodePointer)
+    void preOrder(shared_ptr<Node> nodePointer)
     {
         if (nodePointer != nullptr)
         {
@@ -131,7 +136,7 @@ public:
 
 int main()
 {
-    AVLTree* tree = new AVLTree();
+    unique_ptr<AVLTree> tree = make_unique<AVLTree>();
 
     tree->root = tree->insertValue(tree->root, 10);
     tree->root = tree->insertValue(tree->root, 20);
@@ -139,10 +144,9 @@ int main()
     tree->root = tree->insertValue(tree->root, 40);
     tree->root = tree->insertValue(tree->root, 50);
     tree->root = tree->insertValue(tree->root, 5);
+    tree->root = tree->insertValue(tree->root, 15);
 
     tree->preOrder(tree->root); // Guess what's the output?
-
-    delete tree;
 
     return 0;
 }
