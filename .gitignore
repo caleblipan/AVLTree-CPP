@@ -1,9 +1,7 @@
 bin/
 obj/
 
-*.un
-*.un~
-*.~
+*~
 *.cbp
 *.depend
 *.layout
